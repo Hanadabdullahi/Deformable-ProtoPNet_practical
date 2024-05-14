@@ -17,7 +17,7 @@ import train_and_test as tnt
 import save
 from log import create_logger
 from preprocess import mean, std, preprocess_input_function
-
+print("All packages have been installed ")
 parser = argparse.ArgumentParser()
 parser.add_argument('-gpuid', nargs=1, type=str, default='0') # python3 main.py -gpuid=0,1,2,3
 parser.add_argument('-m', nargs=1, type=float, default=None)
