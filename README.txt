@@ -9,7 +9,7 @@ on it can be downloaded from https://duke.box.com/v/deformable-protopnet
 A video summary of this paper is available at https://youtu.be/2cgidJJtGU8
 
 This code integrates the publicly available code from (https://github.com/cfchen-duke/ProtoPNet) 
-implementing "This Looks Like That: Deep Learning for Interpretable Image Recognition" and from 
+implementing "This Looks Likhe That: Deep Learning for Interpretable Image Recognition" and from 
 (https://github.com/chengdazhi/Deformable-Convolution-V2-PyTorch/tree/pytorch_1.0.0) implementing
 "Deformable ConvNets v2: More Deformable, Better Results" and "Deformable Convolutional Networks."
 
