@@ -1,17 +1,20 @@
-base_architecture = 'resnet50'
-img_size = 224
+base_architecture = 'resnet18'
+img_size = 256
 
 experiment_run = '001'
 
 # Full set: './datasets/CUB_200_2011/'
 # Cropped set: './datasets/cub200_cropped/'
 # Stanford dogs: './datasets/stanford_dogs/'
-data_path = './datasets/CUB_200_2011/'
+data_path = '/Users/hanadabdullahi/Downloads/PriMIA-master/data/'
 #120 classes in stanford_dogs, 200 in CUB_200_2011
 if 'stanford_dogs' in data_path:
     num_classes = 120
 else:
     num_classes = 200
+
+num_classes = 3
+#jag hård kodar in det.
 
 train_dir = data_path + 'train/'
 # Cropped set: train_cropped & test_cropped

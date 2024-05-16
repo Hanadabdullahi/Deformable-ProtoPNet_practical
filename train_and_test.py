@@ -1,6 +1,8 @@
 import time
 import torch
 
+#här har jag ändrat cup och cuda
+
 def _train_or_test(model, dataloader, optimizer=None, class_specific=True, use_l1_mask=True,
                    coefs=None, log=print, subtractive_margin=True, use_ortho_loss=False):
     '''
@@ -8,6 +10,8 @@ def _train_or_test(model, dataloader, optimizer=None, class_specific=True, use_l
     dataloader:
     optimizer: if None, will be test evaluation
     '''
+    
+
     is_train = optimizer is not None
     start = time.time()
     n_examples = 0
@@ -21,23 +25,25 @@ def _train_or_test(model, dataloader, optimizer=None, class_specific=True, use_l
     total_l2 = 0
     total_ortho_loss = 0
     max_offset = 0
+    if isinstance(model, torch.nn.DataParallel):
+        model = model
 
     if use_l1_mask:
-        l1_mask = 1 - torch.t(model.module.prototype_class_identity).cuda()
-        l1 = (model.module.last_layer.weight * l1_mask).norm(p=1)
+        l1_mask = 1 - torch.t(model.prototype_class_identity).cpu()
+        l1 = (model.last_layer.weight * l1_mask).norm(p=1)
     else:
-        l1 = model.module.last_layer.weight.norm(p=1) 
+        l1 = model.last_layer.weight.norm(p=1)
 
     for i, (image, label) in enumerate(dataloader):
-        input = image.cuda()
-        target = label.cuda()
+        input = image.cpu()
+        target = label.cpu()
 
         # torch.enable_grad() has no effect outside of no_grad()
         grad_req = torch.enable_grad() if is_train else torch.no_grad()
         with grad_req:
             # nn.Module has implemented __call__() function
             # so no need to call .forward
-            prototypes_of_correct_class = torch.t(model.module.prototype_class_identity[:,label]).cuda()
+            prototypes_of_correct_class = torch.t(model.prototype_class_identity[:,label]).cpu()
             prototypes_of_wrong_class = 1 - prototypes_of_correct_class
             if subtractive_margin:
                 output, additional_returns = model(input, is_train=is_train, 
@@ -50,27 +56,27 @@ def _train_or_test(model, dataloader, optimizer=None, class_specific=True, use_l
             conv_features = additional_returns[2]
             
             with torch.no_grad():
-                prototype_shape = model.module.prototype_shape
-                epsilon_val = model.module.epsilon_val
-                n_eps_channels = model.module.n_eps_channels
+                prototype_shape = model.prototype_shape
+                epsilon_val = model.epsilon_val
+                n_eps_channels = model.n_eps_channels
 
                 x = conv_features
                 epsilon_channel_x = torch.ones(x.shape[0], n_eps_channels, x.shape[2], x.shape[3]) * epsilon_val
-                epsilon_channel_x = epsilon_channel_x.cuda()
+                epsilon_channel_x = epsilon_channel_x.cpu()
                 x = torch.cat((x, epsilon_channel_x), -3)
-                input_vector_length = model.module.input_vector_length
+                input_vector_length = model.input_vector_length
                 normalizing_factor = (prototype_shape[-2] * prototype_shape[-1])**0.5
                 
                 input_length = torch.sqrt(torch.sum(torch.square(x), dim=-3))
                 input_length = input_length.view(input_length.size()[0], 1, input_length.size()[1], input_length.size()[2]) 
                 input_normalized = input_vector_length * x / input_length
                 input_normalized = input_normalized / normalizing_factor
-                offsets = model.module.conv_offset(input_normalized)
+                offsets = model.conv_offset(input_normalized)
 
-            epsilon_val = model.module.epsilon_val
-            n_eps_channels = model.module.n_eps_channels
+            epsilon_val = model.epsilon_val
+            n_eps_channels = model.n_eps_channels
             epsilon_channel_x = torch.ones(conv_features.shape[0], n_eps_channels, conv_features.shape[2], conv_features.shape[3]) * epsilon_val
-            epsilon_channel_x = epsilon_channel_x.cuda()
+            epsilon_channel_x = epsilon_channel_x.cpu()
             conv_features = torch.cat((conv_features, epsilon_channel_x), -3)
             # compute loss
             cross_entropy = torch.nn.functional.cross_entropy(output, target)
@@ -94,7 +100,7 @@ def _train_or_test(model, dataloader, optimizer=None, class_specific=True, use_l
             else:
                 max_activations, _ = torch.max(max_activations, dim=1)
                 cluster_cost = torch.mean(max_activations)
-                l1 = model.module.last_layer.weight.norm(p=1)
+                l1 = model.last_layer.weight.norm(p=1)
 
             # evaluation statistics
             _, predicted = torch.max(marginless_logits.data, 1)
@@ -114,7 +120,7 @@ def _train_or_test(model, dataloader, optimizer=None, class_specific=True, use_l
             Compute keypoint-wise orthogonality loss, i.e. encourage each piece
             of a prototype to be orthogonal to the others.
             '''
-            orthogonalities = model.module.get_prototype_orthogonalities()
+            orthogonalities = model.get_prototype_orthogonalities()
             orthogonality_loss = torch.norm(orthogonalities)
             total_ortho_loss += orthogonality_loss.item()
 
@@ -164,7 +170,7 @@ def _train_or_test(model, dataloader, optimizer=None, class_specific=True, use_l
         log('\tavg separation:\t{0}'.format(total_avg_separation_cost / n_batches))
     log('\taccu: \t\t{0}%'.format(n_correct / n_examples * 100))
     log('\torthogonality loss:\t{0}'.format(total_ortho_loss / n_batches))
-    log('\tl1: \t\t{0}'.format(model.module.last_layer.weight.norm(p=1).item()))
+    log('\tl1: \t\t{0}'.format(model.last_layer.weight.norm(p=1).item()))
     log('\tavg l2: \t\t{0}'.format(total_l2 / n_batches))
     if coefs is not None:
         log('\tavg l2 with weight: \t\t{0}'.format(coefs['offset_bias_l2'] * total_l2 / n_batches))
@@ -193,54 +199,58 @@ def test(model, dataloader, class_specific=False, log=print, subtractive_margin=
 
 
 def last_only(model, log=print, last_layer_fixed=True):
-    for p in model.module.features.parameters():
+    for p in model.features.parameters():
         p.requires_grad = False
-    for p in model.module.add_on_layers.parameters():
+    for p in model.add_on_layers.parameters():
         p.requires_grad = False
-    model.module.prototype_vectors.requires_grad = False
-    for p in model.module.conv_offset.parameters():
+    model.prototype_vectors.requires_grad = False
+    for p in model.conv_offset.parameters():
         p.requires_grad = False
-    for p in model.module.last_layer.parameters():
+    for p in model.last_layer.parameters():
         p.requires_grad = not last_layer_fixed
     
     log('\tlast layer')
 
 
 def warm_only(model, log=print, last_layer_fixed=True):
-    for p in model.module.features.parameters():
+    if isinstance(model, torch.nn.DataParallel):
+        model = model
+
+    for p in model.features.parameters():
         p.requires_grad = False
-    for p in model.module.add_on_layers.parameters():
+    for p in model.add_on_layers.parameters():
         p.requires_grad = True
-    model.module.prototype_vectors.requires_grad = True
-    for p in model.module.conv_offset.parameters():
+    model.prototype_vectors.requires_grad = True
+    for p in model.conv_offset.parameters():
         p.requires_grad = False
-    for p in model.module.last_layer.parameters():
+    for p in model.last_layer.parameters():
         p.requires_grad = not last_layer_fixed
+
     
     log('\twarm')
 
 def warm_pre_offset(model, log=print, last_layer_fixed=True):
-    for p in model.module.features.parameters():
+    for p in model.features.parameters():
         p.requires_grad = True
-    for p in model.module.add_on_layers.parameters():
+    for p in model.add_on_layers.parameters():
         p.requires_grad = True
-    model.module.prototype_vectors.requires_grad = True
-    for p in model.module.conv_offset.parameters():
-        p.requires_grad = False
-    for p in model.module.last_layer.parameters():
+    model.prototype_vectors.requires_grad = True
+    for p in model.conv_offset.parameters():
+        p.requires_grad = Facpuse
+    for p in model.last_layer.parameters():
         p.requires_grad = not last_layer_fixed
     
     log('\twarm pre offset')
 
 def joint(model, log=print, last_layer_fixed=True):
-    for p in model.module.features.parameters():
+    for p in model.features.parameters():
         p.requires_grad = True
-    for p in model.module.add_on_layers.parameters():
+    for p in model.add_on_layers.parameters():
         p.requires_grad = True
-    model.module.prototype_vectors.requires_grad = True
-    for p in model.module.conv_offset.parameters():
+    model.prototype_vectors.requires_grad = True
+    for p in model.conv_offset.parameters():
         p.requires_grad = True
-    for p in model.module.last_layer.parameters():
+    for p in model.last_layer.parameters():
         p.requires_grad = not last_layer_fixed
     
     log('\tjoint')

@@ -1,0 +1,104 @@
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+joint_optimizer_lrs: 
+{'features': 0.0001, 'add_on_layers': 0.003, 'prototype_vectors': 0.003, 'conv_offset': 0.0001, 'joint_last_layer_lr': 1e-05}
+warm_optimizer_lrs: 
+{'add_on_layers': 0.003, 'prototype_vectors': 0.003}
+start training
+epoch: 	0
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+joint_optimizer_lrs: 
+{'features': 0.0001, 'add_on_layers': 0.003, 'prototype_vectors': 0.003, 'conv_offset': 0.0001, 'joint_last_layer_lr': 1e-05}
+warm_optimizer_lrs: 
+{'add_on_layers': 0.003, 'prototype_vectors': 0.003}
+start training
+epoch: 	0
+	warm
+	train
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+joint_optimizer_lrs: 
+{'features': 0.0001, 'add_on_layers': 0.003, 'prototype_vectors': 0.003, 'conv_offset': 0.0001, 'joint_last_layer_lr': 1e-05}
+warm_optimizer_lrs: 
+{'add_on_layers': 0.003, 'prototype_vectors': 0.003}
+start training
+epoch: 	0
+	warm
+	train
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+joint_optimizer_lrs: 
+{'features': 0.0001, 'add_on_layers': 0.003, 'prototype_vectors': 0.003, 'conv_offset': 0.0001, 'joint_last_layer_lr': 1e-05}
+warm_optimizer_lrs: 
+{'add_on_layers': 0.003, 'prototype_vectors': 0.003}
+start training
+epoch: 	0
+	warm
+	train
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+joint_optimizer_lrs: 
+{'features': 0.0001, 'add_on_layers': 0.003, 'prototype_vectors': 0.003, 'conv_offset': 0.0001, 'joint_last_layer_lr': 1e-05}
+warm_optimizer_lrs: 
+{'add_on_layers': 0.003, 'prototype_vectors': 0.003}
+start training
+epoch: 	0
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+joint_optimizer_lrs: 
+{'features': 0.0001, 'add_on_layers': 0.003, 'prototype_vectors': 0.003, 'conv_offset': 0.0001, 'joint_last_layer_lr': 1e-05}
+warm_optimizer_lrs: 
+{'add_on_layers': 0.003, 'prototype_vectors': 0.003}
+start training
+epoch: 	0
+	warm
+	train
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+joint_optimizer_lrs: 
+{'features': 0.0001, 'add_on_layers': 0.003, 'prototype_vectors': 0.003, 'conv_offset': 0.0001, 'joint_last_layer_lr': 1e-05}
+warm_optimizer_lrs: 
+{'add_on_layers': 0.003, 'prototype_vectors': 0.003}
+start training
+epoch: 	0
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+joint_optimizer_lrs: 
+{'features': 0.0001, 'add_on_layers': 0.003, 'prototype_vectors': 0.003, 'conv_offset': 0.0001, 'joint_last_layer_lr': 1e-05}
+warm_optimizer_lrs: 
+{'add_on_layers': 0.003, 'prototype_vectors': 0.003}
+start training
+epoch: 	0
+	warm
+	train
+training set size: 5163
+push set size: 5163
+test set size: 626
+batch size: 80
+joint_optimizer_lrs: 
+{'features': 0.0001, 'add_on_layers': 0.003, 'prototype_vectors': 0.003, 'conv_offset': 0.0001, 'joint_last_layer_lr': 1e-05}
+warm_optimizer_lrs: 
+{'add_on_layers': 0.003, 'prototype_vectors': 0.003}
+start training
+epoch: 	0

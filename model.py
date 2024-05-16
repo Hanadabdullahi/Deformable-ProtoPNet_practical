@@ -411,9 +411,9 @@ class PPNet(nn.Module):
 
 
 
-def construct_PPNet(base_architecture, pretrained=True, img_size=224,
-                    prototype_shape=(2000, 512, 1, 1),
-                    num_classes=200, topk_k=1, m=None,
+def construct_PPNet(base_architecture, pretrained=True, img_size=256,
+                    prototype_shape=(50, 128, 1, 1),
+                    num_classes=3, topk_k=1, m=None,
                     add_on_layers_type='bottleneck', using_deform=True,
                     incorrect_class_connection=-1, deformable_conv_hidden_channels=128, prototype_dilation=2):
     features = base_architecture_to_features[base_architecture](pretrained=pretrained)
