@@ -10,7 +10,7 @@ from torch.autograd import Function
 from torch.nn.modules.utils import _pair
 from torch.autograd.function import once_differentiable
 
-import DCN
+import dcn
 
 class DeformRoIPoolingFunction(Function):
     @staticmethod

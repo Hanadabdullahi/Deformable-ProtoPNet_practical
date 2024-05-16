@@ -10,8 +10,8 @@ from torch.autograd import Function
 from torch.nn.modules.utils import _pair
 from torch.autograd.function import once_differentiable
 
-import DCN
-
+import dcn
+print("hej")
 class ModulatedDeformConvFunction(Function):
     @staticmethod
     def forward(ctx, input, offset, mask, weight, bias,

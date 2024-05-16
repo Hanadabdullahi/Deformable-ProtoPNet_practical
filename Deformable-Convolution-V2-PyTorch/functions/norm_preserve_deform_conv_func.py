@@ -6,9 +6,8 @@ from __future__ import division
 from torch.autograd import Function
 from torch.nn.modules.utils import _pair
 from torch.autograd.function import once_differentiable
-
-import DCN
-
+print("HÄR ÄR VI FAST")
+import dcn
 class NormPreserveDeformConvFunction(Function):
     @staticmethod
     def forward(ctx, input, offset, weight, bias,
